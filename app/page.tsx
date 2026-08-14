@@ -27,7 +27,7 @@ export default async function PublicLeaderboardPage() {
         width={436}
         height={1100}
         aria-hidden
-        className="pointer-events-none fixed bottom-0 left-0 z-0 h-auto w-[42vw] max-w-[190px] opacity-90 drop-shadow-[0_0_18px_oklch(0.56_0.27_311/0.3)] [mask-image:radial-gradient(130%_130%_at_0%_100%,black_68%,transparent_88%)] sm:w-[30vw] sm:max-w-[230px] sm:opacity-100 lg:w-[22vw] lg:max-w-[300px] xl:w-[18vw] xl:max-w-[350px]"
+        className="pointer-events-none fixed bottom-0 left-0 z-0 h-auto w-[42vw] max-w-[190px] opacity-90 drop-shadow-[0_0_9px_oklch(0.56_0.27_311/0.18)] [mask-image:radial-gradient(130%_130%_at_0%_100%,black_68%,transparent_88%)] sm:w-[30vw] sm:max-w-[230px] sm:opacity-100 lg:w-[22vw] lg:max-w-[300px] xl:w-[18vw] xl:max-w-[350px]"
       />
       <Image
         src="/brand/character-boy.png"
@@ -35,7 +35,15 @@ export default async function PublicLeaderboardPage() {
         width={1029}
         height={1062}
         aria-hidden
-        className="pointer-events-none fixed right-0 bottom-0 z-0 h-auto w-[32vw] max-w-[150px] opacity-90 drop-shadow-[0_0_18px_oklch(0.75_0.165_62/0.35)] [mask-image:radial-gradient(130%_130%_at_100%_100%,black_68%,transparent_88%)] sm:w-[24vw] sm:max-w-[190px] sm:opacity-100 lg:w-[18vw] lg:max-w-[240px] xl:w-[15vw] xl:max-w-[280px]"
+        className="pointer-events-none fixed right-0 bottom-0 z-0 h-auto w-[32vw] max-w-[150px] opacity-90 drop-shadow-[0_0_9px_oklch(0.75_0.165_62/0.2)] [mask-image:radial-gradient(130%_130%_at_100%_100%,black_68%,transparent_88%)] sm:w-[24vw] sm:max-w-[190px] sm:opacity-100 lg:w-[18vw] lg:max-w-[240px] xl:w-[15vw] xl:max-w-[280px]"
+      />
+      <Image
+        src="/brand/character-robot.png"
+        alt=""
+        width={624}
+        height={1100}
+        aria-hidden
+        className="pointer-events-none fixed top-0 right-0 z-0 hidden h-auto opacity-90 drop-shadow-[0_0_9px_oklch(0.75_0.12_220/0.2)] [mask-image:radial-gradient(130%_130%_at_100%_0%,black_60%,transparent_88%)] min-[1120px]:block min-[1120px]:w-[13vw] min-[1120px]:max-w-[190px] xl:w-[11vw] xl:max-w-[220px]"
       />
 
       <div className="relative z-10 mx-auto flex w-full max-w-2xl flex-1 flex-col gap-10 px-5 pt-10 pb-16 sm:gap-14 sm:px-8 sm:pt-16">
