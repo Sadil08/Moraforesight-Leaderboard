@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 import { ActivityCreateDialog } from "@/components/admin/activity-create-dialog";
+import { DeleteDialog } from "@/components/admin/delete-dialog";
+import { deleteActivity } from "@/lib/actions/activities";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -32,6 +34,7 @@ export default async function AdminActivitiesPage() {
             <TableHead>Criteria</TableHead>
             <TableHead>Coordinators</TableHead>
             <TableHead>Visibility</TableHead>
+            <TableHead className="w-12" />
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -52,11 +55,19 @@ export default async function AdminActivitiesPage() {
                   {activity.visible ? "Visible" : "Hidden"}
                 </Badge>
               </TableCell>
+              <TableCell>
+                <DeleteDialog
+                  action={deleteActivity.bind(null, activity.id)}
+                  title={`Remove ${activity.name}?`}
+                  description="This permanently deletes the activity, its Criteria attachments, and Coordinator assignments. This can't be undone."
+                  triggerLabel={`Remove ${activity.name}`}
+                />
+              </TableCell>
             </TableRow>
           ))}
           {activities.length === 0 && (
             <TableRow>
-              <TableCell colSpan={5} className="text-muted-foreground text-center">
+              <TableCell colSpan={6} className="text-muted-foreground text-center">
                 No activities yet.
               </TableCell>
             </TableRow>

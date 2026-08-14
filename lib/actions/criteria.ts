@@ -56,3 +56,23 @@ export async function updateCriterion(
   revalidatePath("/admin/criteria");
   return { status: "success" };
 }
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- required by useActionState's action signature
+export async function deleteCriterion(criterionId: string, _prevState: ActionState, _formData: FormData): Promise<ActionState> {
+  await requireAdmin();
+
+  try {
+    // Detaching from Activities is safe cleanup, not audit history — do it
+    // first so a criterion with no logged points can be removed outright.
+    await prisma.activityCriterion.deleteMany({ where: { criterionId } });
+    await prisma.criterion.delete({ where: { id: criterionId } });
+  } catch {
+    return {
+      status: "error",
+      error: "Points have already been logged against this criterion — hide it instead of deleting it.",
+    };
+  }
+
+  revalidatePath("/admin/criteria");
+  return { status: "success" };
+}

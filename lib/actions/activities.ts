@@ -146,3 +146,24 @@ export async function unassignCoordinator(activityId: string, coordinatorId: str
   });
   revalidatePath(`/admin/activities/${activityId}`);
 }
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- required by useActionState's action signature
+export async function deleteActivity(activityId: string, _prevState: ActionState, _formData: FormData): Promise<ActionState> {
+  await requireAdmin();
+
+  try {
+    // Detaching Criteria/Coordinators is safe cleanup, not audit history —
+    // do it first so an Activity with no logged points can be removed outright.
+    await prisma.activityCriterion.deleteMany({ where: { activityId } });
+    await prisma.activityCoordinator.deleteMany({ where: { activityId } });
+    await prisma.activity.delete({ where: { id: activityId } });
+  } catch {
+    return {
+      status: "error",
+      error: "Points have already been logged for this activity — hide it instead of deleting it.",
+    };
+  }
+
+  revalidatePath("/admin/activities");
+  return { status: "success" };
+}

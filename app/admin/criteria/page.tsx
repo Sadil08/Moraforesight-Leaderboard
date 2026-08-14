@@ -1,4 +1,6 @@
 import { CriterionDialog } from "@/components/admin/criterion-dialog";
+import { DeleteDialog } from "@/components/admin/delete-dialog";
+import { deleteCriterion } from "@/lib/actions/criteria";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -25,7 +27,7 @@ export default async function AdminCriteriaPage() {
             <TableHead>Name</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Visibility</TableHead>
-            <TableHead className="w-12" />
+            <TableHead className="w-24" />
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -41,7 +43,15 @@ export default async function AdminCriteriaPage() {
                 </Badge>
               </TableCell>
               <TableCell>
-                <CriterionDialog criterion={criterion} />
+                <div className="flex items-center justify-end gap-1">
+                  <CriterionDialog criterion={criterion} />
+                  <DeleteDialog
+                    action={deleteCriterion.bind(null, criterion.id)}
+                    title={`Remove ${criterion.name}?`}
+                    description="This permanently deletes the criterion and detaches it from any Activities. This can't be undone."
+                    triggerLabel={`Remove ${criterion.name}`}
+                  />
+                </div>
               </TableCell>
             </TableRow>
           ))}
