@@ -27,7 +27,7 @@ export default async function PublicLeaderboardPage() {
         width={436}
         height={1100}
         aria-hidden
-        className="pointer-events-none fixed bottom-0 left-0 z-0 h-auto w-[42vw] max-w-[190px] opacity-90 drop-shadow-[0_0_9px_oklch(0.56_0.27_311/0.18)] [mask-image:radial-gradient(130%_130%_at_0%_100%,black_68%,transparent_88%)] sm:w-[30vw] sm:max-w-[230px] sm:opacity-100 lg:w-[22vw] lg:max-w-[300px] xl:w-[18vw] xl:max-w-[350px]"
+        className="pointer-events-none fixed bottom-0 left-[min(4vw,40px)] z-0 h-auto w-[42vw] max-w-[190px] opacity-90 drop-shadow-[0_0_9px_oklch(0.56_0.27_311/0.18)] [mask-image:radial-gradient(130%_130%_at_0%_100%,black_68%,transparent_88%)] sm:w-[30vw] sm:max-w-[230px] sm:opacity-100 lg:w-[22vw] lg:max-w-[300px] xl:w-[18vw] xl:max-w-[350px]"
       />
       <Image
         src="/brand/character-boy.png"

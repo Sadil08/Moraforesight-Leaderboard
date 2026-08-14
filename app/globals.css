@@ -111,13 +111,52 @@
   }
   body {
     @apply bg-background text-foreground;
+    position: relative;
+  }
+
+  /* Ambient color wash — oversized and nudged with `transform` (compositor
+     -only, unlike an animated `background-position`, which was found to
+     intermittently corrupt paint on sibling fixed/masked elements in
+     Chromium) so it drifts without repainting anything else on the page. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: -12%;
+    pointer-events: none;
     background-image:
       radial-gradient(ellipse 60% 45% at 12% -8%, oklch(0.56 0.27 311 / 0.28), transparent 60%),
       radial-gradient(ellipse 55% 40% at 105% 8%, oklch(0.52 0.24 270 / 0.24), transparent 60%),
       radial-gradient(ellipse 50% 35% at 90% 95%, oklch(0.75 0.165 62 / 0.16), transparent 60%),
       radial-gradient(ellipse 45% 35% at -5% 85%, oklch(0.71 0.29 327 / 0.14), transparent 60%);
     background-repeat: no-repeat;
-    background-attachment: fixed;
+    will-change: transform;
+    animation: bg-drift 38s ease-in-out infinite alternate;
+  }
+
+  /* Faint circuit-board texture, always behind content and the character
+     layer — reinforces the "tech bootcamp" feel without competing for
+     attention. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image: url("/brand/circuit-pattern.svg");
+    background-repeat: repeat;
+    background-size: 240px 240px;
+    opacity: 0.055;
+  }
+}
+
+@keyframes bg-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(3%, -3.5%, 0);
+  }
+  100% {
+    transform: translate3d(-3%, 2.5%, 0);
   }
 }
 
