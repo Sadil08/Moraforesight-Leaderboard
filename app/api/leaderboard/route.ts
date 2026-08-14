@@ -8,13 +8,24 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const [totals, teams] = await Promise.all([
     currentTeamTotals(),
-    prisma.team.findMany({ select: { id: true, name: true, color: true } }),
+    prisma.team.findMany({
+      select: {
+        id: true,
+        name: true,
+        color: true,
+        students: { select: { name: true }, orderBy: { name: "asc" } },
+      },
+    }),
   ]);
 
   const pointsByTeam = new Map(totals.map((total) => [total.teamId, total._sum.points ?? 0]));
 
   const leaderboard = teams
-    .map((team) => ({ ...team, points: pointsByTeam.get(team.id) ?? 0 }))
+    .map(({ students, ...team }) => ({
+      ...team,
+      points: pointsByTeam.get(team.id) ?? 0,
+      members: students.map((student) => student.name),
+    }))
     .sort((a, b) => b.points - a.points);
 
   return NextResponse.json({ leaderboard });
