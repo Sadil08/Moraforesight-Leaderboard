@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import useSWR from "swr";
 import { Crown, Medal, Trophy } from "lucide-react";
 
@@ -84,7 +85,7 @@ export function Leaderboard() {
                 {team.name}
               </span>
 
-              <span className="font-display shrink-0 text-xl tabular-nums text-gradient-brand sm:text-2xl">
+              <span className="text-gradient-brand shrink-0 text-xl font-bold tabular-nums sm:text-2xl">
                 {team.points}
               </span>
             </button>
@@ -106,9 +107,18 @@ export function Leaderboard() {
         );
       })}
       {data.leaderboard.length === 0 && (
-        <p className="text-muted-foreground py-10 text-center text-sm">
-          No teams yet — check back once the bootcamp kicks off.
-        </p>
+        <li className="flex flex-col items-center gap-3 py-8 text-center">
+          <Image
+            src="/brand/character-robot.png"
+            alt=""
+            width={624}
+            height={1100}
+            className="h-24 w-auto opacity-90 sm:h-28"
+          />
+          <p className="text-muted-foreground text-sm">
+            No teams yet — check back once the bootcamp kicks off.
+          </p>
+        </li>
       )}
     </ol>
   );

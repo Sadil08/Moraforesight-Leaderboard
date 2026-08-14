@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import useSWR from "swr";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -42,7 +43,7 @@ export function ActivityBreakdown({ activityId }: { activityId: string }) {
                 />
                 <span className="truncate text-base font-semibold sm:text-lg">{entry.team.name}</span>
               </span>
-              <span className="font-display text-gradient-brand shrink-0 text-xl tabular-nums sm:text-2xl">
+              <span className="text-gradient-brand shrink-0 text-xl font-bold tabular-nums sm:text-2xl">
                 {entry.total}
               </span>
             </div>
@@ -62,7 +63,16 @@ export function ActivityBreakdown({ activityId }: { activityId: string }) {
           </div>
         ))}
       {data.breakdown.length === 0 && (
-        <p className="text-muted-foreground py-10 text-center text-sm">No teams yet.</p>
+        <div className="flex flex-col items-center gap-3 py-8 text-center">
+          <Image
+            src="/brand/character-robot.png"
+            alt=""
+            width={624}
+            height={1100}
+            className="h-24 w-auto opacity-90 sm:h-28"
+          />
+          <p className="text-muted-foreground text-sm">No teams yet.</p>
+        </div>
       )}
     </div>
   );
