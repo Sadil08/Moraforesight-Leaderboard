@@ -1,0 +1,154 @@
+generator client {
+  provider        = "prisma-client"
+  output          = "../generated/prisma"
+  previewFeatures = ["partialIndexes"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  COORDINATOR
+}
+
+enum DurationType {
+  SESSION
+  GAME
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role
+  // Not in the original data-model.md field list — added to satisfy spec.md §3.1's
+  // "create/disable Admin and Coordinator accounts" requirement (soft-disable, not
+  // delete, since awardedById on PointEntry/StudentPointEntry must stay valid).
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  coordinatingActivities ActivityCoordinator[]
+  pointEntriesAwarded    PointEntry[]
+  studentPointEntriesAwarded StudentPointEntry[]
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  name      String
+  color     String?
+  createdAt DateTime @default(now())
+
+  students    Student[]
+  pointEntries PointEntry[]
+}
+
+model Student {
+  id        String   @id @default(cuid())
+  name      String
+  teamId    String
+  photoUrl  String?
+  createdAt DateTime @default(now())
+
+  team                Team                @relation(fields: [teamId], references: [id])
+  studentPointEntries StudentPointEntry[]
+
+  @@index([teamId])
+}
+
+model Activity {
+  id           String       @id @default(cuid())
+  name         String
+  description  String?
+  durationType DurationType
+  visible      Boolean      @default(true)
+  startAt      DateTime?
+  createdAt    DateTime     @default(now())
+
+  activityCriteria    ActivityCriterion[]
+  activityCoordinators ActivityCoordinator[]
+  pointEntries         PointEntry[]
+  studentPointEntries  StudentPointEntry[]
+}
+
+model Criterion {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  visible     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  activityCriteria    ActivityCriterion[]
+  pointEntries         PointEntry[]
+  studentPointEntries  StudentPointEntry[]
+}
+
+model ActivityCriterion {
+  activityId  String
+  criterionId String
+  pointValue  Int
+
+  activity  Activity  @relation(fields: [activityId], references: [id])
+  criterion Criterion @relation(fields: [criterionId], references: [id])
+
+  @@id([activityId, criterionId])
+}
+
+model ActivityCoordinator {
+  activityId    String
+  coordinatorId String
+
+  activity    Activity @relation(fields: [activityId], references: [id])
+  coordinator User     @relation(fields: [coordinatorId], references: [id])
+
+  @@id([activityId, coordinatorId])
+}
+
+model PointEntry {
+  id           String   @id @default(cuid())
+  activityId   String
+  criterionId  String
+  teamId       String
+  points       Int
+  note         String?
+  awardedById  String
+  createdAt    DateTime @default(now())
+  supersedesId String?  @unique
+
+  activity  Activity  @relation(fields: [activityId], references: [id])
+  criterion Criterion @relation(fields: [criterionId], references: [id])
+  team      Team      @relation(fields: [teamId], references: [id])
+  awardedBy User      @relation(fields: [awardedById], references: [id])
+
+  supersedes   PointEntry? @relation("PointEntryCorrection", fields: [supersedesId], references: [id])
+  supersededBy PointEntry? @relation("PointEntryCorrection")
+
+  @@index([teamId])
+  @@index([activityId, criterionId, teamId])
+  @@unique([activityId, criterionId, teamId], where: raw("\"supersedesId\" IS NULL"))
+}
+
+model StudentPointEntry {
+  id           String   @id @default(cuid())
+  activityId   String
+  criterionId  String
+  studentId    String
+  points       Int
+  note         String?
+  awardedById  String
+  createdAt    DateTime @default(now())
+  supersedesId String?  @unique
+
+  activity  Activity  @relation(fields: [activityId], references: [id])
+  criterion Criterion @relation(fields: [criterionId], references: [id])
+  student   Student   @relation(fields: [studentId], references: [id])
+  awardedBy User      @relation(fields: [awardedById], references: [id])
+
+  supersedes   StudentPointEntry? @relation("StudentPointEntryCorrection", fields: [supersedesId], references: [id])
+  supersededBy StudentPointEntry? @relation("StudentPointEntryCorrection")
+
+  @@index([studentId])
+  @@unique([activityId, criterionId, studentId], where: raw("\"supersedesId\" IS NULL"))
+}
