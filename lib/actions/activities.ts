@@ -13,13 +13,16 @@ const activitySchema = z.object({
   description: z
     .string()
     .trim()
-    .optional()
+    .nullish()
     .transform((value) => (value ? value : undefined)),
   durationType: z.enum(["SESSION", "GAME"]),
+  // .nullish() (not .optional()) because formData.get() returns null, not
+  // undefined, for a field that isn't present in the submitted form at all
+  // (e.g. the create dialog doesn't render every optional field).
   startAt: z
     .string()
     .trim()
-    .optional()
+    .nullish()
     .transform((value) => (value ? new Date(value) : undefined)),
 });
 

@@ -30,15 +30,10 @@ export function Leaderboard() {
     revalidateOnFocus: true,
     refreshWhenHidden: false,
   });
-  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   function toggle(teamId: string) {
-    setExpanded((prev) => {
-      const next = new Set(prev);
-      if (next.has(teamId)) next.delete(teamId);
-      else next.add(teamId);
-      return next;
-    });
+    setExpandedId((prev) => (prev === teamId ? null : teamId));
   }
 
   if (isLoading || !data) {
@@ -55,7 +50,7 @@ export function Leaderboard() {
     <ol className="flex flex-col gap-3">
       {data.leaderboard.map((team, index) => {
         const Icon = RANK_ICON[index];
-        const isOpen = expanded.has(team.id);
+        const isOpen = expandedId === team.id;
         return (
           <li
             key={team.id}

@@ -52,17 +52,23 @@ export function ActivityCreateDialog() {
             <Label htmlFor="description">Description (optional)</Label>
             <Textarea id="description" name="description" />
           </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="durationType">Type</Label>
-            <Select name="durationType" defaultValue="SESSION" required>
-              <SelectTrigger id="durationType" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="SESSION">Session</SelectItem>
-                <SelectItem value="GAME">Game</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="durationType">Type</Label>
+              <Select name="durationType" defaultValue="SESSION" required>
+                <SelectTrigger id="durationType" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="SESSION">Session</SelectItem>
+                  <SelectItem value="GAME">Game</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="startAt">Start (optional)</Label>
+              <Input id="startAt" name="startAt" type="datetime-local" />
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <Checkbox id="visible" name="visible" defaultChecked />
