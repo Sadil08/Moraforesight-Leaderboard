@@ -32,7 +32,7 @@ export default async function PublicLeaderboardPage() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <h1 className="font-display text-gradient-brand text-4xl leading-none tracking-tight sm:text-5xl">
+          <h1 className="font-display text-gradient-brand text-[clamp(1.1rem,6.2vw,3rem)] leading-none tracking-tight whitespace-nowrap">
             MORAFORESIGHT
           </h1>
           <p className="text-muted-foreground text-xs font-medium tracking-[0.3em] uppercase sm:text-sm">

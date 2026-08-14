@@ -15,6 +15,11 @@ const studentSchema = z.object({
     .trim()
     .optional()
     .transform((value) => (value ? value : undefined)),
+  externalId: z
+    .string()
+    .trim()
+    .optional()
+    .transform((value) => (value ? value : undefined)),
 });
 
 export async function createStudent(_prevState: ActionState, formData: FormData): Promise<ActionState> {
@@ -24,12 +29,17 @@ export async function createStudent(_prevState: ActionState, formData: FormData)
     name: formData.get("name"),
     teamId: formData.get("teamId"),
     photoUrl: formData.get("photoUrl"),
+    externalId: formData.get("externalId"),
   });
   if (!parsed.success) {
     return { status: "error", error: parsed.error.issues[0].message };
   }
 
-  await prisma.student.create({ data: parsed.data });
+  try {
+    await prisma.student.create({ data: parsed.data });
+  } catch {
+    return { status: "error", error: "That index number is already assigned to another student." };
+  }
   revalidatePath("/admin/students");
   return { status: "success" };
 }
@@ -45,12 +55,17 @@ export async function updateStudent(
     name: formData.get("name"),
     teamId: formData.get("teamId"),
     photoUrl: formData.get("photoUrl"),
+    externalId: formData.get("externalId"),
   });
   if (!parsed.success) {
     return { status: "error", error: parsed.error.issues[0].message };
   }
 
-  await prisma.student.update({ where: { id: studentId }, data: parsed.data });
+  try {
+    await prisma.student.update({ where: { id: studentId }, data: parsed.data });
+  } catch {
+    return { status: "error", error: "That index number is already assigned to another student." };
+  }
   revalidatePath("/admin/students");
   return { status: "success" };
 }

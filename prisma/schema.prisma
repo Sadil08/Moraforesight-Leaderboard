@@ -50,6 +50,10 @@ model Student {
   name      String
   teamId    String
   photoUrl  String?
+  // Not in the original data-model.md field list — added to preserve university
+  // index numbers (e.g. "MFA0122") from roster imports where a name isn't filled
+  // in yet, so the row stays identifiable until an Admin edits in the real name.
+  externalId String? @unique
   createdAt DateTime @default(now())
 
   team                Team                @relation(fields: [teamId], references: [id])

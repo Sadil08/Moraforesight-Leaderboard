@@ -12,7 +12,7 @@ import { prisma } from "@/lib/prisma";
 export default async function AdminStudentsPage() {
   const [students, teams] = await Promise.all([
     prisma.student.findMany({
-      orderBy: { createdAt: "asc" },
+      orderBy: [{ team: { name: "asc" } }, { name: "asc" }],
       include: { team: true },
     }),
     prisma.team.findMany({ orderBy: { name: "asc" } }),
@@ -30,6 +30,7 @@ export default async function AdminStudentsPage() {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>Index #</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Team</TableHead>
             <TableHead className="w-12" />
@@ -38,6 +39,9 @@ export default async function AdminStudentsPage() {
         <TableBody>
           {students.map((student) => (
             <TableRow key={student.id}>
+              <TableCell className="text-muted-foreground font-mono text-xs">
+                {student.externalId ?? "—"}
+              </TableCell>
               <TableCell className="font-medium">{student.name}</TableCell>
               <TableCell>{student.team.name}</TableCell>
               <TableCell>
@@ -47,7 +51,7 @@ export default async function AdminStudentsPage() {
           ))}
           {students.length === 0 && (
             <TableRow>
-              <TableCell colSpan={3} className="text-muted-foreground text-center">
+              <TableCell colSpan={4} className="text-muted-foreground text-center">
                 No students yet.
               </TableCell>
             </TableRow>

@@ -28,7 +28,13 @@ import {
 } from "@/components/ui/select";
 
 type Team = { id: string; name: string };
-type Student = { id: string; name: string; teamId: string; photoUrl: string | null };
+type Student = {
+  id: string;
+  name: string;
+  teamId: string;
+  photoUrl: string | null;
+  externalId: string | null;
+};
 
 export function StudentDialog({ student, teams }: { student?: Student; teams: Team[] }) {
   const action = student ? updateStudent.bind(null, student.id) : createStudent;
@@ -57,6 +63,10 @@ export function StudentDialog({ student, teams }: { student?: Student; teams: Te
           <div className="flex flex-col gap-2">
             <Label htmlFor="name">Name</Label>
             <Input id="name" name="name" defaultValue={student?.name} required />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="externalId">Index Number (optional)</Label>
+            <Input id="externalId" name="externalId" defaultValue={student?.externalId ?? ""} />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="teamId">Team</Label>
