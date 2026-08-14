@@ -1,4 +1,6 @@
 import { UserCreateDialog } from "@/components/admin/user-create-dialog";
+import { UserDeleteDialog } from "@/components/admin/user-delete-dialog";
+import { UserEditDialog } from "@/components/admin/user-edit-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,7 +32,7 @@ export default async function AdminUsersPage() {
             <TableHead>Email</TableHead>
             <TableHead>Role</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead className="w-24" />
+            <TableHead className="w-48" />
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -47,13 +49,19 @@ export default async function AdminUsersPage() {
                 </Badge>
               </TableCell>
               <TableCell>
-                {user.id !== session.user.id && (
-                  <form action={setUserActive.bind(null, user.id, !user.active)}>
-                    <Button type="submit" variant="outline" size="sm">
-                      {user.active ? "Disable" : "Enable"}
-                    </Button>
-                  </form>
-                )}
+                <div className="flex items-center justify-end gap-1">
+                  <UserEditDialog user={user} />
+                  {user.id !== session.user.id && (
+                    <>
+                      <form action={setUserActive.bind(null, user.id, !user.active)}>
+                        <Button type="submit" variant="outline" size="sm">
+                          {user.active ? "Disable" : "Enable"}
+                        </Button>
+                      </form>
+                      <UserDeleteDialog userId={user.id} name={user.name} />
+                    </>
+                  )}
+                </div>
               </TableCell>
             </TableRow>
           ))}
