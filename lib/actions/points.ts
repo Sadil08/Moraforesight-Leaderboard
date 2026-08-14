@@ -159,13 +159,19 @@ export async function logStudentPoints(
     return { status: "error", error: "You are not assigned to this Activity." };
   }
 
-  const studentId = formData.get("studentId");
+  // One or more students — an ad-hoc subset picked by search, unrelated to
+  // the real Team structure. Each gets its own independent StudentPointEntry
+  // for the same Activity/Criterion/points, so one student already having an
+  // entry doesn't block the rest of the batch.
+  const studentIds = formData
+    .getAll("studentIds")
+    .filter((value): value is string => typeof value === "string" && value.length > 0);
   const criterionId = formData.get("criterionId");
   const rawPoints = formData.get("points");
   const note = formData.get("note");
 
-  if (typeof studentId !== "string" || !studentId) {
-    return { status: "error", error: "Select a student." };
+  if (studentIds.length === 0) {
+    return { status: "error", error: "Select at least one student." };
   }
   if (typeof criterionId !== "string" || !criterionId) {
     return { status: "error", error: "Select a criterion." };
@@ -175,24 +181,35 @@ export async function logStudentPoints(
     return { status: "error", error: "Point value must be a whole number." };
   }
 
-  try {
-    await prisma.studentPointEntry.create({
-      data: {
-        activityId,
-        criterionId,
-        studentId,
-        points,
-        note: typeof note === "string" && note ? note : undefined,
-        awardedById: session.user.id,
-      },
-    });
-  } catch {
-    return {
-      status: "error",
-      error: "This Student/Criterion pair was already logged for this Activity — use a correction instead.",
-    };
+  let succeeded = 0;
+  for (const studentId of studentIds) {
+    try {
+      await prisma.studentPointEntry.create({
+        data: {
+          activityId,
+          criterionId,
+          studentId,
+          points,
+          note: typeof note === "string" && note ? note : undefined,
+          awardedById: session.user.id,
+        },
+      });
+      succeeded++;
+    } catch {
+      // This student already has an entry for this Activity/Criterion —
+      // skip and keep going rather than aborting the whole batch.
+    }
   }
 
   revalidatePath(`/coordinator/activities/${activityId}`);
+
+  if (succeeded < studentIds.length) {
+    const failed = studentIds.length - succeeded;
+    return {
+      status: "error",
+      error: `Logged for ${succeeded} of ${studentIds.length} — ${failed} already had an entry for this criterion (use a correction instead).`,
+    };
+  }
+
   return { status: "success" };
 }
