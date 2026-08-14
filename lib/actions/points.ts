@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { getCoordinatorActivityAccess } from "@/lib/auth-guards";
+import { getCoordinatorActivityAccess, requireAdmin } from "@/lib/auth-guards";
 import { prisma } from "@/lib/prisma";
 import type { ActionState } from "@/lib/actions/action-state";
 
@@ -102,6 +102,50 @@ export async function correctPointEntry(
   }
 
   revalidatePath(`/coordinator/activities/${activityId}`);
+  return { status: "success" };
+}
+
+// Admin-only view of a Student's individual score history — same
+// append-only correction mechanism as correctPointEntry above (never a raw
+// UPDATE), so this stays "edit" from the UI's perspective without breaking
+// the immutable-audit-trail guarantee spec.md requires.
+export async function correctStudentPointEntry(
+  entryId: string,
+  _prevState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const session = await requireAdmin();
+
+  const raw = formData.get("points");
+  const points = typeof raw === "string" ? Number(raw) : NaN;
+  if (!Number.isInteger(points)) {
+    return { status: "error", error: "Point value must be a whole number." };
+  }
+
+  const original = await prisma.studentPointEntry.findUnique({ where: { id: entryId } });
+  if (!original) {
+    return { status: "error", error: "Entry not found." };
+  }
+
+  try {
+    await prisma.studentPointEntry.create({
+      data: {
+        activityId: original.activityId,
+        criterionId: original.criterionId,
+        studentId: original.studentId,
+        points,
+        awardedById: session.user.id,
+        supersedesId: entryId,
+      },
+    });
+  } catch {
+    return {
+      status: "error",
+      error: "This entry was already corrected — refresh the page.",
+    };
+  }
+
+  revalidatePath(`/admin/students/${original.studentId}`);
   return { status: "success" };
 }
 

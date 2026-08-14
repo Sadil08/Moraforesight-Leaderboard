@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { StudentDialog } from "@/components/admin/student-dialog";
 import {
   Table,
@@ -42,7 +44,11 @@ export default async function AdminStudentsPage() {
               <TableCell className="text-muted-foreground font-mono text-xs">
                 {student.externalId ?? "—"}
               </TableCell>
-              <TableCell className="font-medium">{student.name}</TableCell>
+              <TableCell className="font-medium">
+                <Link href={`/admin/students/${student.id}`} className="hover:underline">
+                  {student.name}
+                </Link>
+              </TableCell>
               <TableCell>{student.team.name}</TableCell>
               <TableCell>
                 <StudentDialog student={student} teams={teams} />
