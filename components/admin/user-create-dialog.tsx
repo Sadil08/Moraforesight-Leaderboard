@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import {
   Select,
   SelectContent,
@@ -54,7 +55,7 @@ export function UserCreateDialog() {
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" name="password" type="password" minLength={8} required />
+            <PasswordInput id="password" name="password" minLength={8} required />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="role">Role</Label>
