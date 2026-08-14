@@ -60,23 +60,25 @@ export function Leaderboard() {
           <li
             key={team.id}
             className={cn(
-              "glass-panel rounded-2xl transition-transform",
+              "glass-panel overflow-hidden rounded-2xl transition-transform",
               index < 3 ? RANK_RING[index] : "ring-1 ring-white/10",
             )}
           >
-            <div className="flex items-center gap-3 p-3.5 sm:gap-4 sm:p-4">
-              <button
-                type="button"
-                onClick={() => toggle(team.id)}
-                aria-expanded={isOpen}
-                aria-label={`${isOpen ? "Hide" : "Show"} ${team.name} members`}
+            <button
+              type="button"
+              onClick={() => toggle(team.id)}
+              aria-expanded={isOpen}
+              aria-label={`${isOpen ? "Hide" : "Show"} ${team.name} members`}
+              className="flex w-full cursor-pointer items-center gap-3 p-3.5 text-left transition-colors hover:bg-white/[0.04] sm:gap-4 sm:p-4"
+            >
+              <span
                 className={cn(
-                  "flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-base font-bold transition-transform hover:scale-105 active:scale-95 sm:size-11 sm:text-lg",
+                  "flex size-9 shrink-0 items-center justify-center rounded-full text-base font-bold sm:size-11 sm:text-lg",
                   index < 3 ? RANK_BADGE[index] : "bg-white/8 text-muted-foreground",
                 )}
               >
                 {Icon ? <Icon className="size-4.5 sm:size-5" strokeWidth={2.25} /> : index + 1}
-              </button>
+              </span>
 
               <span
                 className="size-2.5 shrink-0 rounded-full ring-2 ring-white/20"
@@ -90,7 +92,7 @@ export function Leaderboard() {
               <span className="font-display shrink-0 text-xl tabular-nums text-gradient-brand sm:text-2xl">
                 {team.points}
               </span>
-            </div>
+            </button>
 
             {isOpen && (
               <div className="border-t border-white/10 px-4 pb-4 sm:px-5">
