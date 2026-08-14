@@ -15,7 +15,10 @@ export default async function AdminStudentsPage() {
   const [students, teams] = await Promise.all([
     prisma.student.findMany({
       orderBy: [{ team: { name: "asc" } }, { name: "asc" }],
-      include: { team: true },
+      include: {
+        team: true,
+        studentPointEntries: { where: { supersededBy: null }, select: { points: true } },
+      },
     }),
     prisma.team.findMany({ orderBy: { name: "asc" } }),
   ]);
@@ -35,29 +38,38 @@ export default async function AdminStudentsPage() {
             <TableHead>Index #</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Team</TableHead>
+            <TableHead>Score</TableHead>
             <TableHead className="w-12" />
           </TableRow>
         </TableHeader>
         <TableBody>
-          {students.map((student) => (
-            <TableRow key={student.id}>
-              <TableCell className="text-muted-foreground font-mono text-xs">
-                {student.externalId ?? "—"}
-              </TableCell>
-              <TableCell className="font-medium">
-                <Link href={`/admin/students/${student.id}`} className="hover:underline">
-                  {student.name}
-                </Link>
-              </TableCell>
-              <TableCell>{student.team.name}</TableCell>
-              <TableCell>
-                <StudentDialog student={student} teams={teams} />
-              </TableCell>
-            </TableRow>
-          ))}
+          {students.map((student) => {
+            const score = student.studentPointEntries.reduce((sum, entry) => sum + entry.points, 0);
+            return (
+              <TableRow key={student.id}>
+                <TableCell className="text-muted-foreground font-mono text-xs">
+                  {student.externalId ?? "—"}
+                </TableCell>
+                <TableCell className="font-medium">
+                  <Link href={`/admin/students/${student.id}`} className="hover:underline">
+                    {student.name}
+                  </Link>
+                </TableCell>
+                <TableCell>{student.team.name}</TableCell>
+                <TableCell>
+                  <Link href={`/admin/students/${student.id}`} className="tabular-nums hover:underline">
+                    {score}
+                  </Link>
+                </TableCell>
+                <TableCell>
+                  <StudentDialog student={student} teams={teams} />
+                </TableCell>
+              </TableRow>
+            );
+          })}
           {students.length === 0 && (
             <TableRow>
-              <TableCell colSpan={4} className="text-muted-foreground text-center">
+              <TableCell colSpan={5} className="text-muted-foreground text-center">
                 No students yet.
               </TableCell>
             </TableRow>
